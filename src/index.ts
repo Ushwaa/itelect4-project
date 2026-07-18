@@ -8,6 +8,13 @@ import {
   StringOrNumber,
   Status,
   StudentWithCourse,
+  ApiResponse,
+  UserUpdate,
+  UserPreview,
+  PublicUser,
+  RoleCount,
+  SubmissionStatus,
+  Role,
 } from "../types/index";
 
 const studentName: string = "Ariana Santos";
@@ -102,3 +109,71 @@ printValue(valueOrString);
 printValue(123);
 
 console.log({ isClassActive, optionalValue, notDefined, enrollmentStatus });
+
+// -------------------------------
+// Part 2: Generics, ApiResponse, Utility Types, Enums
+// -------------------------------
+
+// Generic functions
+function getFirst<T>(items: T[]): T | undefined {
+  return items.length > 0 ? items[0] : undefined;
+}
+
+function getById<T extends { id: number }>(items: T[], id: number): T | undefined {
+  return items.find((item) => item.id === id);
+}
+
+const firstUser: User | undefined = getFirst<User>([studentWithCourse]);
+const foundUser: User | undefined = getById<User>([user], 1);
+
+console.log("firstUser:", firstUser);
+console.log("foundUser:", foundUser);
+
+// Generic interface usage
+const userResponse: ApiResponse<User> = {
+  success: true,
+  data: user,
+  message: "User fetched successfully",
+};
+
+const courseResponse: ApiResponse<Course[]> = {
+  success: true,
+  data: [course],
+};
+
+console.log("userResponse:", userResponse);
+console.log("courseResponse:", courseResponse);
+
+// Utility types examples
+const updateUserExample: UserUpdate = { name: "Updated Name" };
+const userPreviewExample: UserPreview = { id: user.id, name: user.name, role: user.role };
+const publicUserExample: PublicUser = { id: user.id, name: user.name, role: user.role };
+const roleCountExample: RoleCount = { student: 1, admin: 0, instructor: 0 };
+
+console.log({ updateUserExample, userPreviewExample, publicUserExample, roleCountExample });
+
+// ReturnType example
+function makeSubmission(courseCode: string) {
+  const newSubmission: Submission = {
+    id: Math.floor(Math.random() * 100000),
+    studentId: user.id,
+    courseCode,
+    repoUrl: "https://github.com/example/repo",
+    submittedAt: new Date(),
+  };
+
+  return newSubmission;
+}
+
+type NewSubmission = ReturnType<typeof makeSubmission>;
+
+const created: NewSubmission = makeSubmission(course.code);
+
+console.log("created submission:", created);
+
+// Enums usage
+const statusExample: SubmissionStatus = SubmissionStatus.Graded;
+const roleExample: Role = Role.Student;
+
+console.log("statusExample:", statusExample);
+console.log("roleExample:", roleExample);

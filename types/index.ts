@@ -39,3 +39,29 @@ export type StudentWithCourse = User & {
   enrolledCourse: Course;
   gpa: number;
 };
+
+export interface ApiResponse<T> {
+  success: boolean;
+  data: T;
+  message?: string;
+}
+
+export type UserUpdate = Partial<User>;
+
+export type UserPreview = Pick<User, "id" | "name" | "role">;
+
+export type PublicUser = Omit<User, "email" | "isActive">;
+
+export type RoleCount = Record<"student" | "admin" | "instructor", number>;
+
+export enum SubmissionStatus {
+  Pending,
+  Graded,
+  Late,
+}
+
+export const enum Role {
+  Student = "student",
+  Admin = "admin",
+  Instructor = "instructor",
+}
