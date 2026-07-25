@@ -2,8 +2,6 @@ import {
   User,
   Course,
   Submission,
-  ID,
-  Coordinate,
   Formatter,
   StringOrNumber,
   Status,
@@ -31,9 +29,6 @@ function logMessage(message: string): void {
   console.log(message);
 }
 
-let flexibleValue: any = "This can be anything";
-flexibleValue = { status: "active" };
-
 let unknownValue: unknown = 42;
 
 function processUnknownValue(value: unknown): string {
@@ -46,10 +41,6 @@ function processUnknownValue(value: unknown): string {
   }
 
   return "Unknown value type";
-}
-
-function throwError(message: string): never {
-  throw new Error(message);
 }
 
 const user: User = {
@@ -67,14 +58,6 @@ const course: Course = {
   semester: "1st Semester",
 };
 
-const submission: Submission = {
-  id: 1001,
-  studentId: user.id,
-  courseCode: course.code,
-  repoUrl: "https://github.com/username/itelect4",
-  submittedAt: new Date(),
-  score: 92,
-};
 
 const studentWithCourse: StudentWithCourse = {
   ...user,
@@ -82,8 +65,6 @@ const studentWithCourse: StudentWithCourse = {
   gpa: 3.9,
 };
 
-const studentId: ID = user.id;
-const coordinate: Coordinate = { x: 12, y: 34 };
 const formatter: Formatter = (value: number): string => `Score: ${value.toFixed(1)}`;
 const valueOrString: StringOrNumber = "100";
 const enrollmentStatus: Status = "active";
