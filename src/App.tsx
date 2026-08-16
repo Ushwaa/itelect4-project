@@ -2,9 +2,12 @@ import React, { useEffect, useRef, useState } from "react";
 import UserCard from "./components/UserCard";
 import CourseCard from "./components/CourseCard";
 import SubmissionBadge from "./components/SubmissionBadge";
-import type { User, Course, Submission } from "./types/index";
-import useToggle from "./hooks/useToggle";
+import UserForm from "./components/UserForm";
+import useFetch from "./hooks/useFetch";
 import usePrevious from "./hooks/usePrevious";
+import useToggle from "./hooks/useToggle";
+import type { User, Course, Submission } from "./types/index";
+import { fetchCourses, fetchUsers, simulateApiFailure } from "./services/api";
 
 const App: React.FC = () => {
   const student: User = {
@@ -39,6 +42,20 @@ const App: React.FC = () => {
   const searchInputRef = useRef<HTMLInputElement>(null);
   const previousSearch = usePrevious<string>(searchTerm);
 
+  const userApiRequest = useFetch(async () => {
+    if (simulateApiFailure()) {
+      throw new Error("The user service is temporarily unavailable.");
+    }
+    return fetchUsers();
+  });
+
+  const courseApiRequest = useFetch(async () => {
+    if (simulateApiFailure()) {
+      throw new Error("The course service is temporarily unavailable.");
+    }
+    return fetchCourses();
+  });
+
   const focusSearch = (): void => {
     searchInputRef.current?.focus();
   };
@@ -57,6 +74,11 @@ const App: React.FC = () => {
   const filteredCourses: Course[] = courses.filter((courseItem: Course): boolean =>
     courseItem.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const handleRefreshData = async (): Promise<void> => {
+    await userApiRequest.refetch();
+    await courseApiRequest.refetch();
+  };
 
   if (isLoading) {
     return <p>Loading courses...</p>;
@@ -95,6 +117,35 @@ const App: React.FC = () => {
       <SubmissionBadge submission={submission}>
         <p>On time!</p>
       </SubmissionBadge>
+
+      <section>
+        <h2>Fetched Data</h2>
+        <button type="button" onClick={(): void => { void handleRefreshData(); }}>
+          Refresh Data
+        </button>
+
+        {userApiRequest.loading && <p>Loading users...</p>}
+        {userApiRequest.error && <p>Error: {userApiRequest.error}</p>}
+        {userApiRequest.data && userApiRequest.data.length > 0 && (
+          <ul>
+            {userApiRequest.data.map((userItem) => (
+              <li key={userItem.id}>{userItem.name} - {userItem.email}</li>
+            ))}
+          </ul>
+        )}
+
+        {courseApiRequest.loading && <p>Loading courses...</p>}
+        {courseApiRequest.error && <p>Error: {courseApiRequest.error}</p>}
+        {courseApiRequest.data && courseApiRequest.data.length > 0 && (
+          <ul>
+            {courseApiRequest.data.map((courseItem) => (
+              <li key={courseItem.id}>{courseItem.title}</li>
+            ))}
+          </ul>
+        )}
+      </section>
+
+      <UserForm />
     </div>
   );
 };
