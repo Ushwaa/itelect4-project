@@ -39,17 +39,6 @@ const App: React.FC = () => {
   const searchInputRef = useRef<HTMLInputElement>(null);
   const previousSearch = usePrevious<string>(searchTerm);
 
-  useEffect(() => {
-    const timer: number = window.setTimeout(() => {
-      setCourses([course]);
-      setIsLoading(false);
-    }, 500);
-
-    return (): void => {
-      window.clearTimeout(timer);
-    };
-  }, []);
-
   const focusSearch = (): void => {
     searchInputRef.current?.focus();
   };
@@ -58,14 +47,16 @@ const App: React.FC = () => {
     setSearchTerm(e.target.value);
   };
 
-  const filteredCourses: Course[] = courses.filter((courseItem: Course) =>
+  useEffect((): void => {
+    setTimeout((): void => {
+      setCourses([course]);
+      setIsLoading(false);
+    }, 500);
+  }, []);
+
+  const filteredCourses: Course[] = courses.filter((courseItem: Course): boolean =>
     courseItem.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
-  const handleSelectUser = (selected: User): void => {
-    setSelectedUser(selected);
-    console.log("Selected user:", selected);
-  };
 
   if (isLoading) {
     return <p>Loading courses...</p>;
@@ -73,15 +64,10 @@ const App: React.FC = () => {
 
   return (
     <div>
-      <h1>ITELECT4 GT2 Part 2</h1>
-
-      <UserCard user={student} onSelect={handleSelectUser} />
+      <h1>ITELECT4 GT2 Part 1</h1>
+      <UserCard user={student} onSelect={setSelectedUser} />
 
       {selectedUser && <p>Selected: {selectedUser.name}</p>}
-
-      <button type="button" onClick={toggleDetails}>
-        {showDetails ? "Hide" : "Show"} Details
-      </button>
 
       <div>
         <input
@@ -91,14 +77,16 @@ const App: React.FC = () => {
           value={searchTerm}
           onChange={handleSearchChange}
         />
-        <button type="button" onClick={focusSearch}>
-          Focus Search
-        </button>
+        <button type="button" onClick={focusSearch}>Focus Search</button>
       </div>
 
-      {previousSearch !== undefined && previousSearch !== "" && (
-        <p>Previous search: {previousSearch}</p>
-      )}
+      <button type="button" onClick={toggleDetails}>
+        {showDetails ? "Hide" : "Show"} Details
+      </button>
+
+      {showDetails && <p>Course details are visible.</p>}
+
+      {previousSearch && <p>Previous search: {previousSearch}</p>}
 
       {filteredCourses.map((courseItem: Course) => (
         <CourseCard key={courseItem.code} course={courseItem} />
