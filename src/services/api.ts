@@ -10,7 +10,7 @@ export interface CourseApi {
 }
 
 export function simulateApiFailure(): boolean {
-  return Math.random() < 0.1;
+  return false;
 }
 
 export async function fetchUsers(): Promise<UserApi[]> {
