@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import UserCard from "./components/UserCard";
 import CourseCard from "./components/CourseCard";
 import SubmissionBadge from "./components/SubmissionBadge";
 import type { User, Course, Submission } from "./types/index";
+import useToggle from "./hooks/useToggle";
+import usePrevious from "./hooks/usePrevious";
 
 const App: React.FC = () => {
   const student: User = {
@@ -29,15 +31,79 @@ const App: React.FC = () => {
     score: 95,
   };
 
-  const handleSelectUser = (selectedUser: User): void => {
-    console.log("Selected user:", selectedUser);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [showDetails, toggleDetails] = useToggle(false);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const previousSearch = usePrevious<string>(searchTerm);
+
+  useEffect(() => {
+    const timer: number = window.setTimeout(() => {
+      setCourses([course]);
+      setIsLoading(false);
+    }, 500);
+
+    return (): void => {
+      window.clearTimeout(timer);
+    };
+  }, []);
+
+  const focusSearch = (): void => {
+    searchInputRef.current?.focus();
   };
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    setSearchTerm(e.target.value);
+  };
+
+  const filteredCourses: Course[] = courses.filter((courseItem: Course) =>
+    courseItem.title.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const handleSelectUser = (selected: User): void => {
+    setSelectedUser(selected);
+    console.log("Selected user:", selected);
+  };
+
+  if (isLoading) {
+    return <p>Loading courses...</p>;
+  }
 
   return (
     <div>
-      <h1>ITELECT4 GT2 Part 1</h1>
+      <h1>ITELECT4 GT2 Part 2</h1>
+
       <UserCard user={student} onSelect={handleSelectUser} />
-      <CourseCard course={course} />
+
+      {selectedUser && <p>Selected: {selectedUser.name}</p>}
+
+      <button type="button" onClick={toggleDetails}>
+        {showDetails ? "Hide" : "Show"} Details
+      </button>
+
+      <div>
+        <input
+          ref={searchInputRef}
+          type="text"
+          placeholder="Search courses..."
+          value={searchTerm}
+          onChange={handleSearchChange}
+        />
+        <button type="button" onClick={focusSearch}>
+          Focus Search
+        </button>
+      </div>
+
+      {previousSearch !== undefined && previousSearch !== "" && (
+        <p>Previous search: {previousSearch}</p>
+      )}
+
+      {filteredCourses.map((courseItem: Course) => (
+        <CourseCard key={courseItem.code} course={courseItem} />
+      ))}
+
       <SubmissionBadge submission={submission}>
         <p>On time!</p>
       </SubmissionBadge>
