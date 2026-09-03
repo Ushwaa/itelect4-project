@@ -2,6 +2,7 @@ import {
   User,
   Course,
   Submission,
+  Coordinate,
   Formatter,
   StringOrNumber,
   Status,
@@ -20,6 +21,9 @@ const currentYear: number = 2026;
 const isClassActive: boolean = true;
 const optionalValue: null = null;
 const notDefined: undefined = undefined;
+// GT1 explicitly requires an isolated any example; application code remains type-safe.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const legacyAnyValue: any = "isolated GT1 any example";
 
 function greet(name: string, year: number): string {
   return `Hello ${name}, welcome to ${year}!`;
@@ -29,7 +33,7 @@ function logMessage(message: string): void {
   console.log(message);
 }
 
-let unknownValue: unknown = 42;
+const unknownValue: unknown = 42;
 
 function processUnknownValue(value: unknown): string {
   if (typeof value === "string") {
@@ -66,6 +70,7 @@ const studentWithCourse: StudentWithCourse = {
 };
 
 const formatter: Formatter = (value: number): string => `Score: ${value.toFixed(1)}`;
+const coordinate: Coordinate = { x: 10, y: 20 };
 const valueOrString: StringOrNumber = "100";
 const enrollmentStatus: Status = "active";
 
@@ -89,7 +94,7 @@ console.log(processUnknownValue(unknownValue));
 printValue(valueOrString);
 printValue(123);
 
-console.log({ isClassActive, optionalValue, notDefined, enrollmentStatus });
+console.log({ isClassActive, optionalValue, notDefined, coordinate, enrollmentStatus, legacyAnyValue });
 
 // -------------------------------
 // Part 2: Generics, ApiResponse, Utility Types, Enums

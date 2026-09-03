@@ -108,7 +108,7 @@ interface AppProviderProps {
   children: ReactNode;
 }
 
-export const AppProvider: React.FC<AppProviderProps> = ({ children }): JSX.Element => {
+export const AppProvider: React.FC<AppProviderProps> = ({ children }): React.ReactElement => {
   const [state, dispatch] = useReducer(appReducer, initialState);
 
   const value: AppContextValue = {

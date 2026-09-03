@@ -58,6 +58,7 @@ export enum SubmissionStatus {
   Pending,
   Graded,
   Late,
+  Submitted,
 }
 
 export const enum Role {
@@ -65,3 +66,14 @@ export const enum Role {
   Admin = "admin",
   Instructor = "instructor",
 }
+
+export type ApiSubmission = Omit<Submission, "id" | "submittedAt"> & {
+  id: string;
+  submittedAt: string;
+};
+
+export type NewSubmission = Omit<ApiSubmission, "id">;
+
+export type GradeSubmission = {
+  score: number;
+};

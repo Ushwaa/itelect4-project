@@ -4,10 +4,10 @@ function useToggle(initialValue: boolean): [boolean, () => void] {
   const [value, setValue] = useState<boolean>(initialValue);
 
   const toggle = (): void => {
-    setValue((previousValue: boolean) => !previousValue);
+    setValue((prev) => !prev);
   };
 
   return [value, toggle];
 }
 
-export default useToggle;
+export default useToggle;  // ← ADD THIS

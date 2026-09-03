@@ -1,91 +1,62 @@
-import React, { useState } from "react";
+import React from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-interface UserFormData {
-  name: string;
-  email: string;
-}
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
+import { userFormSchema, type UserFormData } from "../schemas/userFormSchema";
 
-const initialFormData: UserFormData = {
+const defaultValues: UserFormData = {
   name: "",
   email: "",
 };
 
 const UserForm: React.FC = () => {
-  const [formData, setFormData] = useState<UserFormData>(initialFormData);
-  const [errors, setErrors] = useState<string[]>([]);
-  const [successMessage, setSuccessMessage] = useState<string>("");
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<UserFormData>({
+    resolver: zodResolver(userFormSchema),
+    defaultValues,
+  });
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-    const { name, value } = event.target;
-    setFormData((previousData: UserFormData) => ({
-      ...previousData,
-      [name]: value,
-    }));
-  };
-
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
-    event.preventDefault();
-
-    const nextErrors: string[] = [];
-
-    if (formData.name.trim() === "") {
-      nextErrors.push("Name cannot be empty.");
-    }
-
-    if (formData.email.trim() === "") {
-      nextErrors.push("Email cannot be empty.");
-    } else if (!formData.email.includes("@")) {
-      nextErrors.push("Email must include @.");
-    }
-
-    setErrors(nextErrors);
-
-    if (nextErrors.length > 0) {
-      setSuccessMessage("");
-      return;
-    }
-
-    setSuccessMessage("User saved successfully!");
-    setFormData(initialFormData);
+  const onSubmit = (data: UserFormData): void => {
+    console.log("User saved:", data);
+    reset();
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <h3>User Form</h3>
 
-      <div>
-        <label htmlFor="name">Name:</label>
-        <input
+      <div className="space-y-2">
+        <Label htmlFor="name">Name</Label>
+        <Input
           id="name"
-          name="name"
           type="text"
-          value={formData.name}
-          onChange={handleInputChange}
+          placeholder="Juan dela Cruz"
+          aria-invalid={Boolean(errors.name)}
+          {...register("name")}
         />
+        {errors.name && <p className="text-sm text-red-600">{errors.name.message}</p>}
       </div>
 
-      <div>
-        <label htmlFor="email">Email:</label>
-        <input
+      <div className="space-y-2">
+        <Label htmlFor="email">Email</Label>
+        <Input
           id="email"
-          name="email"
           type="email"
-          value={formData.email}
-          onChange={handleInputChange}
+          placeholder="name@example.com"
+          aria-invalid={Boolean(errors.email)}
+          {...register("email")}
         />
+        {errors.email && <p className="text-sm text-red-600">{errors.email.message}</p>}
       </div>
 
-      {errors.length > 0 && (
-        <ul>
-          {errors.map((errorMessage: string) => (
-            <li key={errorMessage}>{errorMessage}</li>
-          ))}
-        </ul>
-      )}
-
-      {successMessage && <p>{successMessage}</p>}
-
-      <button type="submit">Submit</button>
+      <Button type="submit">Submit</Button>
     </form>
   );
 };
