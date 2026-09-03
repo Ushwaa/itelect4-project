@@ -73,3 +73,7 @@ export type ApiSubmission = Omit<Submission, "id" | "submittedAt"> & {
 };
 
 export type NewSubmission = Omit<ApiSubmission, "id">;
+
+export type GradeSubmission = {
+  score: number;
+};

@@ -7,7 +7,7 @@ import type { SubmissionFormValues } from "../schemas/submissionSchema";
 
 import type { ApiSubmission } from "../types/index";
 import SubmissionBadge from "../components/SubmissionBadge";
-import { fetchSubmissions, createSubmission } from "../api/client";
+import { fetchSubmissions, createSubmission, gradeSubmission } from "../api/client";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -40,6 +40,14 @@ function SubmissionsPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["submissions"] });
       reset();
+    },
+  });
+
+  const gradeMutation = useMutation({
+    mutationFn: ({ id, score }: { id: string; score: number }) =>
+      gradeSubmission(id, { score }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["submissions"] });
     },
   });
 
@@ -125,7 +133,13 @@ function SubmissionsPage() {
       )}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         {data.map((s) => (
-          <SubmissionBadge key={s.id} submission={s}>
+          <SubmissionBadge
+            key={s.id}
+            submission={s}
+            onGrade={(submission) =>
+              gradeMutation.mutate({ id: submission.id, score: 95 })
+            }
+          >
             <p className="text-sm text-gray-500 dark:text-gray-400">
               Course: {s.courseCode}
             </p>

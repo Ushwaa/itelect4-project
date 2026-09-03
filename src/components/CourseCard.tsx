@@ -1,5 +1,5 @@
-import { useState } from "react";
 import type { Course } from "../types/index";
+import useUiStore from "../store/uiStore";
 
 interface CourseCardProps {
   course: Course;
@@ -9,11 +9,12 @@ interface CourseCardProps {
 
 function CourseCard({ course, variant = "default", onEnroll }: CourseCardProps) {
   const isCompact = variant === "compact";
-  const [isEnrolled, setIsEnrolled] = useState<boolean>(false);
+  const isEnrolled = useUiStore((state) => state.enrolledCourseCodes.includes(course.code));
+  const enrollInCourse = useUiStore((state) => state.enrollInCourse);
 
   const handleEnroll = (e: React.MouseEvent<HTMLButtonElement>): void => {
     e.preventDefault();
-    setIsEnrolled(true);
+    enrollInCourse(course.code);
     if (onEnroll) {
       onEnroll(course);
     }

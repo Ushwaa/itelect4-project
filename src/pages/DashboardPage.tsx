@@ -4,6 +4,7 @@ import useToggle from "../hooks/useToggle";
 import { useAppContext } from "../context/AppContext";
 import type { User } from "../types/index";
 import { fetchUsers } from "../api/client";
+import Dashboard from "../components/Dashboard";
 
 function DashboardPage() {
   const { state, dispatch } = useAppContext();
@@ -48,6 +49,7 @@ function DashboardPage() {
           Selected: {state.selectedUser.name} ({state.selectedUser.role})
         </p>
       )}
+      <Dashboard />
     </div>
   );
 }

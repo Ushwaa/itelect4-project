@@ -1,4 +1,4 @@
-import type { User, Course, ApiSubmission, NewSubmission } from "../types/index";
+import type { User, Course, ApiSubmission, NewSubmission, GradeSubmission } from "../types/index";
 
 export const API_URL = "http://localhost:3001";
 
@@ -18,7 +18,8 @@ export async function fetchUsers(): Promise<User[]> {
   if (!res.ok) {
     throw new Error("Could not load users");
   }
-  return res.json();
+  const users: Array<User & { id: number | string }> = await res.json();
+  return users.map((user) => ({ ...user, id: Number(user.id) }));
 }
 
 // GET /courses -> the whole list
@@ -67,6 +68,22 @@ export async function createSubmission(
   });
   if (!res.ok) {
     throw new Error("Could not save the submission");
+  }
+  return res.json();
+}
+
+export async function gradeSubmission(
+  id: string,
+  grade: GradeSubmission
+): Promise<ApiSubmission> {
+  throwIfSimulatedFailure();
+  const res = await fetch(`${API_URL}/submissions/${id}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(grade),
+  });
+  if (!res.ok) {
+    throw new Error("Could not grade the submission");
   }
   return res.json();
 }
