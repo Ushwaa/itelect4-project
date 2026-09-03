@@ -9,6 +9,10 @@ A React and TypeScript frontend for managing courses and student submissions. Th
 - GT3 React Router pages, authentication with protected submissions, TanStack Query queries and mutation, Zustand UI/auth state, and React Context with `useReducer`
 - GT3 Part 3 forms using React Hook Form, Zod-derived types, `.refine()` validation, and Shadcn-style `Button`, `Input`, and `Label` components
 
+## GT3 Part 3 Completion
+
+The final frontend includes a typed submission form backed by the JSON Server mutation. Valid submissions are posted through TanStack Query and refresh the submissions query; invalid course and repository values show field-level Zod errors. The form uses `z.infer`, React Hook Form, and the shared Button, Input, and Label components.
+
 ## Installation
 
 ```bash
