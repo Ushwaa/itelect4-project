@@ -1,89 +1,53 @@
-# IT Elective 4 - TypeScript Foundations (ITELECT4)
+# ITELECT4 Submission Tracker
 
-## Project Title
-
-ITELECT4 TypeScript Foundations - GT1
-
-## Project Description
-
-This repository contains a TypeScript project for the ITELECT4 Session 1 Graded Task (GT1). It demonstrates core TypeScript features including primitive types, functions, generics, interfaces, type aliases, utility types, enums, and type narrowing. The project is configured with strict compiler options.
+A React and TypeScript frontend for managing courses and student submissions. The project contains the progressive graded-task work from GT1 Part 1 through GT3 Part 3.
 
 ## Features
 
-- Explicit primitive type annotations
-- Functions with typed parameters and return values
-- Generic functions and generic interfaces
-- Utility type examples (`Partial`, `Pick`, `Omit`, `Record`)
-- `ReturnType` usage example
-- Enums (`SubmissionStatus`, `Role`)
-- Zero TypeScript compiler errors with strict settings
+- GT1 TypeScript foundations: strict typing, interfaces, aliases, unions, intersections, narrowing, generics, utility types, enums, and `ReturnType`
+- GT2 typed React components, hooks, search/filtering, API requests, loading/error states, and JSON Server data
+- GT3 React Router pages, authentication with protected submissions, TanStack Query queries and mutation, Zustand UI/auth state, and React Context with `useReducer`
+- GT3 Part 3 forms using React Hook Form, Zod-derived types, `.refine()` validation, and Shadcn-style `Button`, `Input`, and `Label` components
 
-## Interfaces Created
-
-- `User`
-- `Course`
-- `Submission`
-- `ApiResponse<T>`
-
-## Type Aliases
-
-- `ID`
-- `Coordinate`
-- `Formatter`
-- `StringOrNumber`
-- `Status`
-- `StudentWithCourse`
-
-## Utility Types
-
-- `UserUpdate` (Partial<User>)
-- `UserPreview` (Pick<User, "id" | "name" | "role")
-- `PublicUser` (Omit<User, "email" | "isActive")
-- `RoleCount` (Record<"student" | "admin" | "instructor", number>)
-
-## Enums
-
-- `SubmissionStatus` (Pending, Graded, Late)
-- `Role` (Student, Admin, Instructor)
-
-## How to Install
-
-Run:
+## Installation
 
 ```bash
 npm install
 ```
 
-## How to Run
+## Run the application
 
-Run the main TypeScript file using `ts-node`:
+Start the API in one terminal:
 
 ```bash
-npx ts-node src/index.ts
+npm run api
 ```
 
-## How to Check TypeScript Errors
+Start the frontend in another terminal:
 
-To verify there are no TypeScript errors:
+```bash
+npm run dev
+```
+
+The frontend runs on Vite's default port, usually http://localhost:5173/. The API runs on http://localhost:3001/.
+
+## Verification
 
 ```bash
 npx tsc --noEmit
+npm run lint
+npm run build
 ```
 
-## Project Folder Structure
+## Project structure
 
-```
-itelect4-project/
-├── src/
-│   ├── index.ts
-│   └── sample.ts
-├── types/
-│   └── index.ts
-├── tsconfig.json
-├── package.json
-└── README.md
-```
-
----
-
-This project follows strict TypeScript settings and demonstrates best practices for typing and code organization.
+- `types/index.ts`: canonical GT1 shared types
+- `src/index.ts`: GT1 demonstrations and examples
+- `src/components/`: typed reusable components and UI primitives
+- `src/pages/`: routed dashboard, courses, login, and submissions views
+- `src/api/client.ts`: typed JSON Server queries and submission mutation
+- `src/context/`: Context and reducer global state
+- `src/hooks/`: reusable typed hooks
+- `src/schemas/`: Zod validation schemas
+- `src/store/`: persisted authentication and UI state
+- `db.json`: JSON Server seed data

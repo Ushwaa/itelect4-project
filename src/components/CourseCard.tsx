@@ -1,19 +1,50 @@
-import React from "react";
+import { useState } from "react";
 import type { Course } from "../types/index";
 
 interface CourseCardProps {
   course: Course;
+  variant?: "default" | "compact";
+  onEnroll?: (course: Course) => void;
 }
 
-const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
+function CourseCard({ course, variant = "default", onEnroll }: CourseCardProps) {
+  const isCompact = variant === "compact";
+  const [isEnrolled, setIsEnrolled] = useState<boolean>(false);
+
+  const handleEnroll = (e: React.MouseEvent<HTMLButtonElement>): void => {
+    e.preventDefault();
+    setIsEnrolled(true);
+    if (onEnroll) {
+      onEnroll(course);
+    }
+    console.log("Enrolled in:", course.code);
+  };
+
   return (
-    <section>
-      <h3>{course.title}</h3>
-      <p>Code: {course.code}</p>
-      <p>Units: {course.units}</p>
-      <p>Semester: {course.semester}</p>
-    </section>
+    <div className={`m-4 rounded-lg border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800 ${
+      isCompact ? "p-3" : "p-5"
+    }`}>
+      <h3 className={`font-bold text-gray-900 dark:text-white ${
+        isCompact ? "text-sm" : "text-lg"
+      }`}>
+        {course.code}
+      </h3>
+      {!isCompact && (
+        <p className="text-gray-600 dark:text-gray-300">{course.title}</p>
+      )}
+      <p className="text-sm text-gray-500 dark:text-gray-400">
+        {course.units} units — {course.semester}
+      </p>
+      <button
+        type="button"
+        onClick={handleEnroll}
+        disabled={isEnrolled}
+        className="mt-2 rounded bg-green-600 px-3 py-1.5 text-sm font-semibold text-white transition hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600"
+      >
+        {isEnrolled ? "Enrolled" : "Enroll"}
+      </button>
+    </div>
   );
-};
+}
 
 export default CourseCard;
