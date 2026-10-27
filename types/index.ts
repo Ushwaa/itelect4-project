@@ -67,7 +67,7 @@ export const enum Role {
   Instructor = "instructor",
 }
 
-export type ApiSubmission = Omit<Submission, "id" | "submittedAt"> & {
+export type ApiSubmission = Omit<Submission, "id" | "studentId" | "submittedAt"> & {
   _id: string;
   submittedAt: string;
 };
