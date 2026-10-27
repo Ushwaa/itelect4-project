@@ -6,15 +6,18 @@ import { submissionSchema } from "../schemas/submissionSchema";
 import type { SubmissionFormValues } from "../schemas/submissionSchema";
 
 import type { ApiSubmission } from "../types/index";
+import type { Course } from "../types/index";
 import SubmissionBadge from "../components/SubmissionBadge";
-import { fetchSubmissions, createSubmission, gradeSubmission } from "../api/client";
+import { fetchCourses, fetchSubmissions, createSubmission, gradeSubmission } from "../api/client";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import useAuthStore from "../store/authStore";
 
 function SubmissionsPage() {
   const queryClient = useQueryClient();
+  const userId = useAuthStore((state) => state.userId);
 
   const {
     register,
@@ -31,14 +34,18 @@ function SubmissionsPage() {
   });
 
   const { data, isPending, isError } = useQuery<ApiSubmission[]>({
-    queryKey: ["submissions"],
+    queryKey: ["submissions", userId],
     queryFn: fetchSubmissions,
+  });
+  const coursesQuery = useQuery<Course[]>({
+    queryKey: ["courses"],
+    queryFn: fetchCourses,
   });
 
   const addSubmission = useMutation({
     mutationFn: createSubmission,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["submissions"] });
+      queryClient.invalidateQueries({ queryKey: ["submissions", userId] });
       reset();
     },
   });
@@ -47,32 +54,29 @@ function SubmissionsPage() {
     mutationFn: ({ id, score }: { id: string; score: number }) =>
       gradeSubmission(id, { score }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["submissions"] });
+      queryClient.invalidateQueries({ queryKey: ["submissions", userId] });
     },
   });
 
   // The write path still goes through the Session 7 useMutation (addSubmission).
   // React Hook Form + Zod only gate what reaches onSubmit.
   const onSubmit = (values: SubmissionFormValues): void => {
-    addSubmission.mutate({
-      studentId: 1,
-      courseCode: values.courseCode,
-      repoUrl: values.repoUrl,
-      submittedAt: new Date().toISOString(),
-    });
+    addSubmission.mutate(values);
   };
 
-  if (isPending) {
+  if (isPending || coursesQuery.isPending) {
     return <div className="animate-pulse p-6">Loading submissions...</div>;
   }
 
-  if (isError) {
+  if (isError || coursesQuery.isError) {
     return (
       <div className="rounded-lg bg-red-50 p-4 text-red-700">
-        Could not load submissions.
+        {isError ? "Could not load submissions." : coursesQuery.error?.message ?? "Could not load courses."}
       </div>
     );
   }
+
+  const courses = coursesQuery.data;
 
   return (
     <div>
@@ -92,9 +96,11 @@ function SubmissionsPage() {
             className="w-full rounded border border-input bg-background px-3 py-2 text-sm text-foreground"
           >
             <option value="">Choose a course...</option>
-            <option value="ITELECT4">ITELECT4</option>
-            <option value="ITELECT3">ITELECT3</option>
-            <option value="CSSWENG">CSSWENG</option>
+            {courses.map((course) => (
+              <option key={course.code} value={course.code}>
+                {course.code} - {course.title}
+              </option>
+            ))}
           </select>
           {errors.courseCode && (
             <p className="text-sm text-red-600">
@@ -131,13 +137,17 @@ function SubmissionsPage() {
           {addSubmission.error.message}
         </p>
       )}
+      {gradeMutation.isError && (
+        <p role="alert" className="mb-4 text-sm text-red-700">{gradeMutation.error.message}</p>
+      )}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        {data.length === 0 && <p className="text-sm text-gray-600 dark:text-gray-300">No submissions yet.</p>}
         {data.map((s) => (
           <SubmissionBadge
-            key={s.id}
+            key={s._id}
             submission={s}
             onGrade={(submission) =>
-              gradeMutation.mutate({ id: submission.id, score: 95 })
+              gradeMutation.mutate({ id: submission._id, score: 95 })
             }
           >
             <p className="text-sm text-gray-500 dark:text-gray-400">

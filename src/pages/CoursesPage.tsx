@@ -26,7 +26,7 @@ function CoursesPage() {
   if (isError) {
     return (
       <div className="rounded-lg bg-red-50 p-4 text-red-700">
-        {error.message} -- is json-server running on port 3001?
+        {error.message}
       </div>
     );
   }
@@ -52,6 +52,9 @@ function CoursesPage() {
         <p className="mt-1 text-sm text-gray-500">
           Previous search: "{previousSearch}"
         </p>
+      )}
+      {filteredCourses.length === 0 && (
+        <p className="mt-6 text-sm text-gray-600 dark:text-gray-300">No courses match your search.</p>
       )}
       <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {filteredCourses.map((c) => (

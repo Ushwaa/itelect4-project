@@ -6,6 +6,7 @@ function Layout() {
   const isDarkMode = useUiStore((state) => state.isDarkMode);
   const toggleDarkMode = useUiStore((state) => state.toggleDarkMode);
   const userName = useAuthStore((state) => state.userName);
+  const token = useAuthStore((state) => state.token);
   const logout = useAuthStore((state) => state.logout);
 
   const base = "rounded px-3 py-1.5 text-sm";
@@ -28,20 +29,31 @@ function Layout() {
           <NavLink to="/courses" className={linkClass}>
             Courses
           </NavLink>
-          <NavLink to="/submissions" className={linkClass}>
-            Submissions
-          </NavLink>
-          {userName === null ? (
-            <NavLink to="/login" className={linkClass}>
-              Login
-            </NavLink>
+          {token === null ? (
+            <>
+              <NavLink to="/login" className={linkClass}>
+                Login
+              </NavLink>
+              <NavLink to="/register" className={linkClass}>
+                Register
+              </NavLink>
+            </>
           ) : (
-            <button
-              onClick={logout}
-              className="rounded px-3 py-1.5 text-sm text-gray-700 dark:text-gray-300"
-            >
-              Logout ({userName})
-            </button>
+            <>
+              <NavLink to="/submissions" className={linkClass}>
+                Submissions
+              </NavLink>
+              <span className="px-3 py-1.5 text-sm text-gray-700 dark:text-gray-300">
+                {userName}
+              </span>
+              <button
+                type="button"
+                onClick={logout}
+                className="rounded px-3 py-1.5 text-sm text-gray-700 dark:text-gray-300"
+              >
+                Logout
+              </button>
+            </>
           )}
           <button
             onClick={toggleDarkMode}

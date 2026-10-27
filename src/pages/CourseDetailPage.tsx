@@ -12,7 +12,7 @@ function CourseDetailPage() {
 
   const { data, isPending, isError, error } = useQuery<Course>({
     queryKey: ["courses", code],
-    queryFn: () => fetchCourseByCode(code!),
+    queryFn: () => fetchCourseByCode(code ?? ""),
     enabled: code !== undefined,
   });
 
