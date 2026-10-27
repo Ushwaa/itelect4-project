@@ -1,21 +1,18 @@
 import { useQuery } from "@tanstack/react-query";
-import UserCard from "../components/UserCard";
-import useToggle from "../hooks/useToggle";
-import { useAppContext } from "../context/AppContext";
-import type { User } from "../types/index";
-import { fetchUsers } from "../api/client";
+import useAuthStore from "../store/authStore";
+import type { Course } from "../types/index";
+import { fetchCourses } from "../api/client";
 import Dashboard from "../components/Dashboard";
 
 function DashboardPage() {
-  const { state, dispatch } = useAppContext();
-  const [showDetails, toggleDetails] = useToggle(false);
-  const { data, isPending, isError, error } = useQuery<User[]>({
-    queryKey: ["users"],
-    queryFn: fetchUsers,
+  const userName = useAuthStore((state) => state.userName);
+  const { data, isPending, isError, error } = useQuery<Course[]>({
+    queryKey: ["courses"],
+    queryFn: fetchCourses,
   });
 
   if (isPending) {
-    return <div className="animate-pulse p-6">Loading users...</div>;
+    return <div className="animate-pulse p-6">Loading dashboard...</div>;
   }
 
   if (isError) {
@@ -27,28 +24,10 @@ function DashboardPage() {
       <h2 className="mb-4 text-2xl font-bold text-gray-900 dark:text-white">
         Dashboard
       </h2>
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {data.map((user) => (
-          <UserCard
-            key={user.id}
-            user={user}
-            onSelect={(selectedUser) =>
-              dispatch({ type: "SET_SELECTED_USER", payload: selectedUser })
-            }
-          />
-        ))}
-      </div>
-      <button
-        onClick={toggleDetails}
-        className="mt-4 rounded bg-gray-200 px-3 py-1.5 text-sm dark:bg-gray-700 dark:text-white"
-      >
-        {showDetails ? "Hide" : "Show"} Details
-      </button>
-      {showDetails && state.selectedUser !== null && (
-        <p className="mt-2 text-gray-700 dark:text-gray-300">
-          Selected: {state.selectedUser.name} ({state.selectedUser.role})
-        </p>
-      )}
+      <p className="mb-4 text-gray-600 dark:text-gray-300">
+        {userName ? `Welcome back, ${userName}.` : "Browse courses or sign in to manage your submissions."}
+      </p>
+      <p className="mb-6 text-sm text-gray-500 dark:text-gray-400">{data.length} courses available</p>
       <Dashboard />
     </div>
   );

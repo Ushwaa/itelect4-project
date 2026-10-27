@@ -1,9 +1,13 @@
 export {
   API_URL,
-  fetchUsers,
   fetchCourses,
   fetchCourseByCode,
   fetchSubmissions,
   createSubmission,
+  fetchSubmissionById,
+  gradeSubmission,
+  deleteSubmission,
+  registerUser,
+  loginUser,
 } from "../api/client";
-export type { User, Course, ApiSubmission, NewSubmission } from "../types/index";
+export type { Course, ApiSubmission, NewSubmission } from "../types/index";

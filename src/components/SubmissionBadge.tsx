@@ -17,7 +17,6 @@ const SubmissionBadge: React.FC<SubmissionBadgeProps> = ({
     if (onGrade) {
       onGrade(submission);
     }
-    console.log("Grading submission:", submission.id);
   };
 
   const getStatus = (score?: number): SubmissionStatus => {

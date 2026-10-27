@@ -67,13 +67,33 @@ export const enum Role {
   Instructor = "instructor",
 }
 
-export type ApiSubmission = Omit<Submission, "id" | "submittedAt"> & {
-  id: string;
+export type ApiSubmission = Omit<Submission, "id" | "studentId" | "submittedAt"> & {
+  _id: string;
   submittedAt: string;
 };
 
-export type NewSubmission = Omit<ApiSubmission, "id">;
+export type NewSubmission = Pick<ApiSubmission, "courseCode" | "repoUrl">;
 
 export type GradeSubmission = {
   score: number;
 };
+
+export interface AuthUser {
+  id: string;
+  username: string;
+  email: string;
+}
+
+export interface AuthResponse {
+  token: string;
+  user: AuthUser;
+}
+
+export interface LoginCredentials {
+  email: string;
+  password: string;
+}
+
+export interface RegisterPayload extends LoginCredentials {
+  username: string;
+}
