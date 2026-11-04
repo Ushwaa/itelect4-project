@@ -7,6 +7,7 @@ import CourseDetailPage from "./pages/CourseDetailPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import SubmissionsPage from "./pages/SubmissionsPage";
+import AiReviewPage from "./pages/AiReview";
 import NotFoundPage from "./pages/NotFoundPage";
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
         <Route path="register" element={<RegisterPage />} />
         <Route element={<ProtectedRoute />}>
           <Route path="submissions" element={<SubmissionsPage />} />
+          <Route path="review" element={<AiReviewPage />} />
         </Route>
         <Route path="*" element={<NotFoundPage />} />
       </Route>

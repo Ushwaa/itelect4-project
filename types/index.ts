@@ -97,3 +97,13 @@ export interface LoginCredentials {
 export interface RegisterPayload extends LoginCredentials {
   username: string;
 }
+
+export type AiReviewStatus = "ready" | "almost" | "not-yet";
+
+export interface AiReviewResponse {
+  summary: string;
+  strengths: string[];
+  improvements: string[];
+  nextSteps: string[];
+  readiness: AiReviewStatus;
+}
