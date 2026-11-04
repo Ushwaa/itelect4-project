@@ -1,4 +1,5 @@
 import type {
+  AiReviewResponse,
   ApiSubmission,
   AuthResponse,
   Course,
@@ -116,4 +117,12 @@ export function registerUser(payload: RegisterPayload): Promise<AuthResponse> {
 
 export function loginUser(credentials: LoginCredentials): Promise<AuthResponse> {
   return request<AuthResponse>("/api/auth/login", { method: "POST", body: credentials });
+}
+
+export function askAi(prompt: string): Promise<AiReviewResponse> {
+  return request<AiReviewResponse>("/api/ai", {
+    method: "POST",
+    body: { prompt },
+    authenticated: true,
+  });
 }

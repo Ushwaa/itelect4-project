@@ -43,6 +43,9 @@ function Layout() {
               <NavLink to="/submissions" className={linkClass}>
                 Submissions
               </NavLink>
+              <NavLink to="/review" className={linkClass}>
+                AI Review
+              </NavLink>
               <span className="px-3 py-1.5 text-sm text-gray-700 dark:text-gray-300">
                 {userName}
               </span>
